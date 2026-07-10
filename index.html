@@ -45,19 +45,19 @@
             position: relative;
         }
 
-        /* FORÇANDO AS TELAS RESTRITAS A FICAREM ESCONDIDAS POR PADRÃO */
+        /* CONFIGURAÇÃO INICIAL VISUAL DAS TELAS */
         #login-screen {
-            display: none; /* Controlado via JavaScript no carregamento */
+            display: block; /* FORÇADO: A tela de login inicia VISÍVEL por padrão */
             text-align: center;
             padding: 10px 0;
         }
 
         #dashboard-screen {
-            display: none;
+            display: none; /* Escondido até fazer o login */
         }
 
         #client-screen {
-            display: none;
+            display: none; /* Escondido até abrir o link do cliente */
         }
 
         .logo-container {
@@ -331,7 +331,7 @@
 
     <div class="container">
         
-        <!-- 1. TELA DE LOGIN PRIVADA (OBRIGATÓRIA PARA A DONA) -->
+        <!-- 1. TELA DE LOGIN PRIVADA DA DONA -->
         <div id="login-screen">
             <div class="logo-container">
                 <div class="logo-bg"><div class="logo-img">🥟</div></div>
@@ -350,7 +350,7 @@
             <button class="btn-primary" onclick="handleLogin()">Entrar no Painel</button>
         </div>
 
-        <!-- 2. PAINEL DE CRIAÇÃO (SÓ DESBLOQUEIA APÓS LOGIN) -->
+        <!-- 2. PAINEL DE CRIAÇÃO (SÓ ABRE APÓS DIGITAR A SENHA CORRETA) -->
         <div id="dashboard-screen">
             <button class="btn-logout" onclick="handleLogout()"><i class="fa-solid fa-power-off"></i> Sair</button>
             
@@ -454,47 +454,40 @@
         const PIX_KEY = "01387976680";
         const COMPANY_PHONE = "5531992778232";
 
-        // AGORA SIM gerencia o fluxo de telas corretamente ao iniciar
+        // CONTROLE DE FLUXO SEGURO AO INICIAR A PÁGINA
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             
             if (urlParams.has('orçamento')) {
-                // Fluxo do Cliente: Pula o login e abre direto o recibo
+                // Se tem orçamento na URL, vai DIRETO para a tela do cliente
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('dashboard-screen').style.display = 'none';
                 document.getElementById('client-screen').style.display = 'block';
                 renderClientView(urlParams);
             } else {
-                // Fluxo da Dona: Se não tiver logada, FORÇA a exibição da tela de login
-                if (localStorage.getItem('kika_logged') === 'true') {
-                    showDashboard();
-                } else {
-                    document.getElementById('client-screen').style.display = 'none';
-                    document.getElementById('dashboard-screen').style.display = 'none';
-                    document.getElementById('login-screen').style.display = 'block'; // LOGIN FORÇADO AQUI
-                }
+                // SEM SEGUNDAS CHANCES: Link limpo sempre abre estritamente a tela de login
+                document.getElementById('client-screen').style.display = 'none';
+                document.getElementById('dashboard-screen').style.display = 'none';
+                document.getElementById('login-screen').style.display = 'block';
             }
         };
 
         function handleLogin() {
             const email = document.getElementById('email').value.trim();
             const pass = document.getElementById('password').value;
+            
             if (email === AUTH_EMAIL && pass === AUTH_PASS) {
-                localStorage.setItem('kika_logged', 'true');
-                showDashboard();
+                // Esconde o login e mostra o painel limpo da dona
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('client-screen').style.display = 'none';
+                document.getElementById('dashboard-screen').style.display = 'block';
             } else {
                 alert('Acesso negado. Credenciais incorretas.');
             }
         }
 
-        function showDashboard() {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('client-screen').style.display = 'none';
-            document.getElementById('dashboard-screen').style.display = 'block';
-        }
-
         function handleLogout() {
-            localStorage.removeItem('kika_logged');
+            // Recarrega e volta do zero para a tela de login
             window.location.href = window.location.href.split('?')[0];
         }
 
