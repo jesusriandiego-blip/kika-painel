@@ -45,10 +45,19 @@
             position: relative;
         }
 
-        /* ESTILIZAÇÃO DA TELA DE LOGIN PRIVADA */
+        /* FORÇANDO AS TELAS RESTRITAS A FICAREM ESCONDIDAS POR PADRÃO */
         #login-screen {
+            display: none; /* Controlado via JavaScript no carregamento */
             text-align: center;
             padding: 10px 0;
+        }
+
+        #dashboard-screen {
+            display: none;
+        }
+
+        #client-screen {
+            display: none;
         }
 
         .logo-container {
@@ -145,11 +154,6 @@
             background-color: var(--primary-hover);
         }
 
-        /* PAINEL DE CRIAÇÃO (OCULTO POR PADRÃO) */
-        #dashboard-screen {
-            display: none;
-        }
-
         .btn-logout {
             position: absolute;
             top: 20px;
@@ -208,7 +212,7 @@
             margin-bottom: 20px;
         }
 
-        /* CAIXA DE RESULTADO DO LINK ENCURTADO */
+        /* CAIXA VERMELHA DO LINK ENCURTADO PARA A DONA COPIAR */
         .result-box {
             margin-top: 20px;
             padding: 15px;
@@ -241,11 +245,7 @@
             outline: none;
         }
 
-        /* TELA DO CLIENTE (RECIBO - OCULTA POR PADRÃO) */
-        #client-screen {
-            display: none;
-        }
-
+        /* RECIBO DO CLIENTE */
         .receipt {
             border: 1px solid #FFE0B2;
             border-radius: 12px;
@@ -331,7 +331,7 @@
 
     <div class="container">
         
-        <!-- 1. TELA DE LOGIN PRIVADA DA DONA -->
+        <!-- 1. TELA DE LOGIN PRIVADA (OBRIGATÓRIA PARA A DONA) -->
         <div id="login-screen">
             <div class="logo-container">
                 <div class="logo-bg"><div class="logo-img">🥟</div></div>
@@ -350,7 +350,7 @@
             <button class="btn-primary" onclick="handleLogin()">Entrar no Painel</button>
         </div>
 
-        <!-- 2. PAINEL DE CRIAÇÃO (SÓ ABRE APÓS LOGIN DA DONA) -->
+        <!-- 2. PAINEL DE CRIAÇÃO (SÓ DESBLOQUEIA APÓS LOGIN) -->
         <div id="dashboard-screen">
             <button class="btn-logout" onclick="handleLogout()"><i class="fa-solid fa-power-off"></i> Sair</button>
             
@@ -387,15 +387,15 @@
 
             <button class="btn-primary" id="btn-generate" onclick="generateBudgetLink()">Gerar Link Seguro</button>
 
-            <!-- CAIXA DE SUCESSO COM O LINK CURTO PARA COPIAR -->
+            <!-- CAIXA VERMELHA COM O LINK ENCURTADO E BOTÃO DE COPIAR -->
             <div class="result-box" id="result-box">
-                <p>📸 Link criptografado gerado com sucesso!</p>
+                <p>📸 Link curto gerado com sucesso!</p>
                 <input type="text" class="share-link" id="generated-url" readonly onclick="this.select()">
                 <button class="btn-primary" style="background:#cc3333;" onclick="copyGeneratedLink()">Copiar Link do Orçamento</button>
             </div>
         </div>
 
-        <!-- 3. TELA DO CLIENTE (RECIBO - SÓ QUEM TEM O LINK GERADO ACESSA DIRETO) -->
+        <!-- 3. TELA DO CLIENTE (RECIBO COM CNPJ E CEP) -->
         <div id="client-screen">
             <div class="logo-container">
                 <div class="logo-bg"><div class="logo-img">🥟</div></div>
@@ -425,7 +425,6 @@
                     <span id="view-total">R$ 0,00</span>
                 </div>
 
-                <!-- Dados profissionais -->
                 <div class="company-info">
                     <strong>Kika Salgados</strong><br>
                     CNPJ: 24.864.405/0001-36<br>
@@ -450,25 +449,29 @@
     <div class="toast" id="toast">Copiado!</div>
 
     <script>
-        // Credenciais configuradas
         const AUTH_EMAIL = "valquiriavasconcelosdejesus@gmail.com";
         const AUTH_PASS = "250182";
         const PIX_KEY = "01387976680";
         const COMPANY_PHONE = "5531992778232";
 
+        // AGORA SIM gerencia o fluxo de telas corretamente ao iniciar
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
-            // Se possuir o parâmetro de orçamento na URL, significa que é o cliente abrindo o link encurtado.
+            
             if (urlParams.has('orçamento')) {
+                // Fluxo do Cliente: Pula o login e abre direto o recibo
                 document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('dashboard-screen').style.display = 'none';
                 document.getElementById('client-screen').style.display = 'block';
                 renderClientView(urlParams);
             } else {
-                // Se for o link puro, checa se a dona já efetuou o login antes
+                // Fluxo da Dona: Se não tiver logada, FORÇA a exibição da tela de login
                 if (localStorage.getItem('kika_logged') === 'true') {
                     showDashboard();
                 } else {
-                    document.getElementById('login-screen').style.display = 'block';
+                    document.getElementById('client-screen').style.display = 'none';
+                    document.getElementById('dashboard-screen').style.display = 'none';
+                    document.getElementById('login-screen').style.display = 'block'; // LOGIN FORÇADO AQUI
                 }
             }
         };
@@ -486,6 +489,7 @@
 
         function showDashboard() {
             document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('client-screen').style.display = 'none';
             document.getElementById('dashboard-screen').style.display = 'block';
         }
 
@@ -558,7 +562,6 @@
             const baseUrl = window.location.href.split('?')[0];
             const longUrl = `${baseUrl}?orçamento=${encodedData}`;
 
-            // Encurtador por trás dos panos via API is.gd
             fetch(`https://corsproxy.io/?${encodeURIComponent('https://is.gd/create.php?format=json&url=' + encodeURIComponent(longUrl))}`)
                 .then(res => res.json())
                 .then(data => {
