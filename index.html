@@ -11,7 +11,7 @@
             --primary-color: #CC3333;
             --primary-hover: #B32424;
             --secondary-color: #43A047;
-            --background-color: #FFF3E0; /* Fundo do 2º modelo */
+            --background-color: #FFF3E0;
             --card-background: #FFFFFF;
             --text-color: #4E342E;
             --border-color: #FFE0B2;
@@ -45,7 +45,7 @@
             position: relative;
         }
 
-        /* TELA DE LOGIN */
+        /* TELA DE LOGIN PRIVADA */
         #login-screen {
             text-align: center;
         }
@@ -70,7 +70,7 @@
         .logo-img {
             width: 65px;
             height: 65px;
-            font-size: 50px;
+            font-size: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -159,6 +159,7 @@
             background: #757575;
             color: white;
             border-radius: 6px;
+            text-transform: uppercase;
         }
 
         .item-row {
@@ -206,38 +207,7 @@
             margin-bottom: 20px;
         }
 
-        .result-box {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #FFEBEE;
-            border: 1px dashed var(--primary-color);
-            border-radius: 10px;
-            display: none;
-            text-align: center;
-        }
-
-        .result-box p {
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #C62828;
-        }
-
-        .share-link {
-            width: 100%;
-            padding: 10px;
-            background-color: #fff;
-            border: 1px solid #FFCDD2;
-            border-radius: 6px;
-            font-size: 13px;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            text-align: center;
-            word-break: break-all;
-            font-weight: bold;
-        }
-
-        /* TELA DO CLIENTE (RECIBO) */
+        /* TELA DO CLIENTE */
         #client-screen {
             display: none;
         }
@@ -346,7 +316,7 @@
             <button class="btn-primary" onclick="handleLogin()">Entrar no Painel</button>
         </div>
 
-        <!-- 2. PAINEL DE CRIAÇÃO (PRIMEIRO MODELO VISUAL COM AS CORES DO SEGUNDO) -->
+        <!-- 2. PAINEL DE CRIAÇÃO -->
         <div id="dashboard-screen">
             <button class="btn-logout" onclick="handleLogout()"><i class="fa-solid fa-power-off"></i> Sair</button>
             
@@ -368,7 +338,6 @@
 
             <label style="display:block; margin-bottom:8px; font-weight:bold; font-size:14px;">Produtos/Comidas do Orçamento</label>
             <div id="items-container">
-                <!-- Linha inicial de produto -->
                 <div class="item-row">
                     <input type="text" class="item-name" placeholder="Item (Ex: Cento de Salgados)" value="Almoço/jantar">
                     <input type="number" class="item-val" placeholder="Valor" oninput="calculateTotal()" value="">
@@ -383,15 +352,9 @@
             </div>
 
             <button class="btn-primary" id="btn-generate" onclick="generateBudgetLink()">Gerar Link Seguro</button>
-
-            <div class="result-box" id="result-box">
-                <p>🎉 Link criptografado gerado com sucesso!</p>
-                <input type="text" class="share-link" id="generated-url" readonly onclick="this.select()">
-                <button class="btn-primary" style="background:#555;" onclick="copyGeneratedLink()">Copiar Link do Orçamento</button>
-            </div>
         </div>
 
-        <!-- 3. TELA DO CLIENTE (VAI DIRETO SEM PEDIR LOGIN SE TIVER PARÂMETRO) -->
+        <!-- 3. TELA DO CLIENTE -->
         <div id="client-screen">
             <div class="logo-container">
                 <div class="logo-bg"><div class="logo-img">🥟</div></div>
@@ -414,9 +377,7 @@
                     <span id="view-event-date">-</span>
                 </div>
                 
-                <div id="view-items-list" style="margin-top:10px; border-top:1px dashed #FFE0B2; padding-top:10px;">
-                    <!-- Itens entram aqui dinamicamente -->
-                </div>
+                <div id="view-items-list" style="margin-top:10px; border-top:1px dashed #FFE0B2; padding-top:10px;"></div>
 
                 <div class="receipt-total">
                     <span>TOTAL:</span>
@@ -454,7 +415,6 @@
 
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
-            // CORREÇÃO CRÍTICA: Se tem a chave do orçamento antigo (?orçamento=), manda direto pro cliente!
             if (urlParams.has('orçamento')) {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('client-screen').style.display = 'block';
@@ -519,6 +479,7 @@
             return total;
         }
 
+        // FUNÇÃO ATUALIZADA: GERA O LINK EM SILÊNCIO, ENVIA PRO WHATSAPP E LIMPA A TELA IMEDIATAMENTE (VOLTA PRA IMG 2)
         function generateBudgetLink() {
             const name = document.getElementById('client-name').value.trim();
             const eventDate = document.getElementById('event-date').value;
@@ -542,26 +503,24 @@
             }
 
             const btn = document.getElementById('btn-generate');
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Encurtando...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processando...`;
             btn.disabled = true;
 
             const dataObj = { client: name, date: eventDate, list: items, genAt: Date.now() };
             const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(dataObj))));
             
             const baseUrl = window.location.href.split('?')[0];
-            // Mantendo a chave original exata da primeira foto: ?orçamento=
             const longUrl = `${baseUrl}?orçamento=${encodedData}`;
 
-            // Encurtador automático profissional via API sem quebrar CORS
+            // Encurta invisivelmente por trás dos panos
             fetch(`https://corsproxy.io/?${encodeURIComponent('https://is.gd/create.php?format=json&url=' + encodeURIComponent(longUrl))}`)
                 .then(res => res.json())
                 .then(data => {
-                    document.getElementById('generated-url').value = data.shorturl || longUrl;
-                    document.getElementById('result-box').style.display = 'block';
+                    const finalUrl = data.shorturl || longUrl;
+                    sendToWhatsAppAndReset(name, items, finalUrl);
                 })
                 .catch(() => {
-                    document.getElementById('generated-url').value = longUrl;
-                    document.getElementById('result-box').style.display = 'block';
+                    sendToWhatsAppAndReset(name, items, longUrl);
                 })
                 .finally(() => {
                     btn.innerHTML = `Gerar Link Seguro`;
@@ -569,11 +528,33 @@
                 });
         }
 
-        function copyGeneratedLink() {
-            const input = document.getElementById('generated-url');
-            input.select();
-            navigator.clipboard.writeText(input.value);
-            showToast("Link copiado!");
+        function sendToWhatsAppAndReset(clientName, items, shortUrl) {
+            let total = 0;
+            let itemsText = '';
+            items.forEach(item => {
+                total += item.v;
+                itemsText += `• ${item.n}: ${item.v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n`;
+            });
+
+            // Monta o texto que vai abrir no WhatsApp da Kika para ela apenas enviar para o cliente
+            const msg = encodeURIComponent(`✨ *Kika Salgados - Orçamento Gerado* ✨\n\n👤 *Cliente:* ${clientName}\n\n📋 *Itens:* \n${itemsText}\n💰 *Total:* ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n\n🔗 *Acesse seu orçamento completo aqui:* \n${shortUrl}`);
+            
+            // Abre o WhatsApp da Kika com a mensagem montada e o link encurtado dentro
+            window.open(`https://wa.me/${COMPANY_PHONE}?text=${msg}`, '_blank');
+
+            // RETORNA EXATAMENTE PARA O ESTADO DA IMAGEM 2 (Tudo limpo para o próximo)
+            document.getElementById('client-name').value = '';
+            document.getElementById('event-date').value = '';
+            
+            const container = document.getElementById('items-container');
+            container.innerHTML = `
+                <div class="item-row">
+                    <input type="text" class="item-name" placeholder="Item (Ex: Cento de Salgados)" value="Almoço/jantar">
+                    <input type="number" class="item-val" placeholder="Valor" oninput="calculateTotal()" value="">
+                    <button class="btn-remove" onclick="removeItem(this)"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            `;
+            document.getElementById('total-display').innerText = 'R$ 0,00';
         }
 
         function renderClientView(params) {
