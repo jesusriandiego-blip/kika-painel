@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Orçamentos - Kika Salgados</title>
+    <style>
+        :root {
+            --primary-color: #D32F2F; /* Vermelho Kika Salgados */
+            --dark-color: #1A1A1A;
+            --light-color: #F8F9FA;
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--light-color); color: var(--dark-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { background: white; width: 100%; max-width: 550px; padding: 30px; border-radius: var(--border-radius); box-shadow: 0 8px 24px rgba(0,0,0,0.12); border-top: 10px solid var(--primary-color); position: relative; }
+        
+        .header { text-align: center; margin-bottom: 25px; }
+        .logo-container { width: 90px; height: 90px; margin: 0 auto 10px auto; background: #FFEBEE; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--primary-color); }
+        .header h1 { color: var(--primary-color); font-size: 26px; text-transform: uppercase; letter-spacing: 1px; }
+        .header p { color: #666; font-size: 14px; margin-top: 5px; }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 6px; font-size: 14px; color: #444; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #CCC; border-radius: var(--border-radius); font-size: 15px; transition: 0.3s; }
+        .form-group input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 5px rgba(211, 47, 47, 0.3); }
+        
+        /* Sistema Dinâmico de Itens */
+        .item-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .item-row input[type="text"] { flex: 2; padding: 12px; border: 1px solid #CCC; border-radius: var(--border-radius); }
+        .item-row input[type="number"] { flex: 1; padding: 12px; border: 1px solid #CCC; border-radius: var(--border-radius); }
+        
+        .btn-add { background: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: var(--border-radius); cursor: pointer; font-weight: bold; font-size: 16px; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-add:hover { background: #43A047; }
+        .btn-remove { background: #f44336; color: white; border: none; padding: 12px; border-radius: var(--border-radius); cursor: pointer; }
+
+        .total-box-calc { background: #FFF3E0; border: 1px solid #FFE0B2; padding: 15px; border-radius: var(--border-radius); font-size: 18px; font-weight: bold; text-align: right; color: #E65100; margin-bottom: 20px; }
+
+        button.main-btn { width: 100%; background-color: var(--primary-color); color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: var(--border-radius); cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        button.main-btn:hover { background-color: #B71C1C; }
+
+        .result-box { background: #FFEBEE; border: 1px dashed var(--primary-color); padding: 15px; border-radius: var(--border-radius); margin-top: 20px; display: none; text-align: center; }
+        .link-generated { font-weight: bold; color: var(--primary-color); word-break: break-all; background: white; padding: 8px; border-radius: 4px; display: block; margin-bottom: 12px; border: 1px solid #FFCDD2; font-size: 13px; }
+
+        /* Telas Ocultas por Padrão */
+        .hidden { display: none !important; }
+        .item-list-client { background: #F5F5F5; padding: 15px; border-radius: var(--border-radius); margin: 15px 0; border-left: 4px solid var(--primary-color); }
+        .client-item-line { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #DDD; }
+        .total-highlight { font-size: 24px; color: var(--primary-color); font-weight: bold; text-align: center; margin: 25px 0; background: #FFEBEE; padding: 10px; border-radius: var(--border-radius); }
+        .whatsapp-btn { background-color: #25D366; }
+        .whatsapp-btn:hover { background-color: #128C7E; }
+    </style>
+</head>
+<body>
+
+    <!-- 🔑 TELA DE LOGIN (CYBERSEGURANÇA DA DONA) -->
+    <div class="container" id="loginScreen">
+        <div class="header">
+            <div class="logo-container">
+                <!-- Mascote Coxinha em formato Vetorial de alta qualidade -->
+                <svg viewBox="0 0 64 64" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M32 4C28 16 12 40 12 48s8 12 20 12 20-4 20-12S36 16 32 4z" fill="#FFA726"/>
+                    <path d="M32 6C29 17 15 39 15 47s7 11 17 11 17-3 17-11S35 17 32 6z" fill="#FFB74D"/>
+                    <circle cx="25" cy="42" r="3" fill="#1A1A1A"/>
+                    <circle cx="39" cy="42" r="3" fill="#1A1A1A"/>
+                    <path d="M26 49s3 4 6 4 6-4 6-4" fill="none" stroke="#1A1A1A" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M19 18s4-1 3 3-5-1-3-3z" fill="#D32F2F"/>
+                    <circle cx="21" cy="19" r="1.5" fill="#FFF"/>
+                </svg>
+            </div>
+            <h1>Acesso Restrito</h1>
+            <p>Painel de Orçamentos Kika Salgados</p>
+        </div>
+        <div class="form-group">
+            <label>E-mail da Dona</label>
+            <input type="email" id="loginEmail" placeholder="exemplo@gmail.com" onkeydown="if(event.key === 'Enter') handleLogin()">
+        </div>
+        <div class="form-group">
+            <label>Senha de Segurança</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key === 'Enter') handleLogin()">
+        </div>
+        <button class="main-btn" onclick="handleLogin()">Entrar no Painel</button>
+    </div>
+
+    <!-- 🔒 TELA 1: PAINEL DA DONA -->
+    <div class="container hidden" id="panelView">
+        <div class="header">
+            <div class="logo-container">
+                <svg viewBox="0 0 64 64" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M32 4C28 16 12 40 12 48s8 12 20 12 20-4 20-12S36 16 32 4z" fill="#FFA726"/>
+                    <path d="M32 6C29 17 15 39 15 47s7 11 17 11 17-3 17-11S35 17 32 6z" fill="#FFB74D"/>
+                    <circle cx="25" cy="42" r="3" fill="#1A1A1A"/>
+                    <circle cx="39" cy="42" r="3" fill="#1A1A1A"/>
+                    <path d="M26 49s3 4 6 4 6-4 6-4" fill="none" stroke="#1A1A1A" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M19 18s4-1 3 3-5-1-3-3z" fill="#D32F2F"/>
+                    <circle cx="21" cy="19" r="1.5" fill="#FFF"/>
+                </svg>
+            </div>
+            <h1>Kika Salgados</h1>
+            <p>Gerador Digital de Orçamentos</p>
+        </div>
+        
+        <div class="form-group">
+            <label>Nome do Cliente</label>
+            <input type="text" id="clientName" placeholder="Ex: Maria Silva">
+        </div>
+        <div class="form-group">
+            <label>Data do Evento</label>
+            <input type="date" id="eventDate">
+        </div>
+
+        <label style="display:block; font-weight:bold; margin-bottom:6px; font-size:14px;">Produtos/Comidas do Orçamento</label>
+        <div id="itemsContainer">
+            <div class="item-row">
+                <input type="text" class="item-name" placeholder="Ex: Cento de Coxinha ou Feijoada">
+                <input type="number" class="item-price" placeholder="R$ Valor" step="0.01" oninput="calculateAutoTotal()">
+                <button class="btn-remove" onclick="this.parentElement.remove(); calculateAutoTotal();">✕</button>
+            </div>
+        </div>
+
+        <button class="btn-add" onclick="addItemRow()">+ Adicionar Item</button>
+
+        <div class="total-box-calc">
+            Total Automático: R$ <span id="autoTotalValue">0,00</span>
+        </div>
+
+        <button class="main-btn" onclick="generateBudget()">Gerar Link Seguro</button>
+
+        <div class="result-box" id="resultBox">
+            <p style="font-size:14px; margin-bottom:10px; font-weight:500; color:#444;">🎉 Link criptografado gerado com sucesso!</p>
+            <span class="link-generated" id="outputLink"></span>
+            <button class="main-btn" onclick="copyLink()">Copiar Link do Orçamento</button>
+        </div>
+    </div>
+
+    <!-- 👤 TELA 2: VISUALIZAÇÃO DO CLIENTE -->
+    <div class="container hidden" id="clientView">
+        <div class="header">
+            <div class="logo-container">
+                <svg viewBox="0 0 64 64" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M32 4C28 16 12 40 12 48s8 12 20 12 20-4 20-12S36 16 32 4z" fill="#FFA726"/>
+                    <path d="M32 6C29 17 15 39 15 47s7 11 17 11 17-3 17-11S35 17 32 6z" fill="#FFB74D"/>
+                    <circle cx="25" cy="42" r="3" fill="#1A1A1A"/>
+                    <circle cx="39" cy="42" r="3" fill="#1A1A1A"/>
+                    <path d="M26 49s3 4 6 4 6-4 6-4" fill="none" stroke="#1A1A1A" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M19 18s4-1 3 3-5-1-3-3z" fill="#D32F2F"/>
+                    <circle cx="21" cy="19" r="1.5" fill="#FFF"/>
+                </svg>
+            </div>
+            <h1>Kika Salgados</h1>
+            <p>Seu Orçamento Exclusivo</p>
+        </div>
+
+        <div style="font-size: 15px; color: #444; line-height: 1.5;">
+            <p>Olá, <strong id="viewName"></strong>! Preparamos o orçamento do seu pedido com muito carinho.</p>
+            <p style="margin-top: 8px;">📅 <strong>Data de Entrega/Evento:</strong> <span id="viewDate"></span></p>
+        </div>
+
+        <div class="item-list-client" id="viewItems">
+            <!-- Itens entram aqui dinamicamente -->
+        </div>
+
+        <div class="total-highlight">
+            Valor Total: R$ <span id="viewTotal"></span>
+        </div>
+
+        <button class="main-btn whatsapp-btn" onclick="acceptBudget()">Confirmar Pedido via WhatsApp</button>
+    </div>
+
+    <script>
+        const OWNER_EMAIL = "valquiriavasconcelosdejesus@gmail.com"; 
+        const OWNER_PASSWORD = "250182"; 
+
+        // Sistema de Login
+        function handleLogin() {
+            const emailInput = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const passInput = document.getElementById('loginPassword').value.trim();
+
+            if (emailInput === OWNER_EMAIL && passInput === OWNER_PASSWORD) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('panelView').classList.remove('hidden');
+            } else {
+                alert("⚠️ Acesso Negado! Digite o e-mail ou a senha corretamente.");
+            }
+        }
+
+        function addItemRow() {
+            const container = document.getElementById('itemsContainer');
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            row.innerHTML = `
+                <input type="text" class="item-name" placeholder="Ex: Cento de Coxinha ou Feijoada">
+                <input type="number" class="item-price" placeholder="R$ Valor" step="0.01" oninput="calculateAutoTotal()">
+                <button class="btn-remove" onclick="this.parentElement.remove(); calculateAutoTotal();">✕</button>
+            `;
+            container.appendChild(row);
+        }
+
+        function calculateAutoTotal() {
+            const prices = document.getElementsByClassName('item-price');
+            let total = 0;
+            for(let i = 0; i < prices.length; i++) {
+                const val = parseFloat(prices[i].value);
+                if(!isNaN(val)) total += val;
+            }
+            document.getElementById('autoTotalValue').innerText = total.toFixed(2).replace('.', ',');
+            return total.toFixed(2);
+        }
+
+        function generateBudget() {
+            const name = document.getElementById('clientName').value;
+            const date = document.getElementById('eventDate').value;
+            
+            const itemNames = document.getElementsByClassName('item-name');
+            const itemPrices = document.getElementsByClassName('item-price');
+            
+            let itemsData = [];
+            for(let i = 0; i < itemNames.length; i++) {
+                if(itemNames[i].value && itemPrices[i].value) {
+                    itemsData.push({ n: itemNames[i].value, p: itemPrices[i].value });
+                }
+            }
+
+            if(!name || !date || itemsData.length === 0) {
+                alert('Por favor, preencha o nome, data e pelo menos um produto com valor.');
+                return;
+            }
+
+            const total = calculateAutoTotal();
+            const dataObj = { name: name, date: date, items: itemsData, total: total };
+            const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(dataObj))));
+            
+            const currentUrl = window.location.href.split('?')[0];
+            const finalLink = `${currentUrl}?orcamento=${encodedData}`;
+
+            document.getElementById('outputLink').innerText = finalLink;
+            document.getElementById('resultBox').style.display = 'block';
+        }
+
+        function copyLink() {
+            const linkText = document.getElementById('outputLink').innerText;
+            navigator.clipboard.writeText(linkText);
+            alert('Link seguro copiado com sucesso!');
+        }
+
+        function acceptBudget() {
+            const name = document.getElementById('viewName').innerText;
+            const total = document.getElementById('viewTotal').innerText;
+            const message = encodeURIComponent(`Olá, Kika Salgados! Acabei de visualizar meu orçamento no valor de R$ ${total} em nome de ${name} e quero confirmar o pedido!`);
+            
+            // INSIRA O WHATSAPP REAL DA KIKA ABAIXO
+            window.open(`https://wa.me/5511999999999?text=${message}`, '_blank');
+        }
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orcamentoId = urlParams.get('orcamento');
+
+            if(orcamentoId) {
+                try {
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('panelView').classList.add('hidden');
+                    document.getElementById('clientView').classList.remove('hidden');
+
+                    const decodedData = JSON.parse(decodeURIComponent(escape(atob(orcamentoId))));
+                    
+                    const dateArr = decodedData.date.split('-');
+                    const formattedDate = `${dateArr[2]}/${dateArr[1]}/${dateArr[0]}`;
+
+                    document.getElementById('viewName').innerText = decodedData.name;
+                    document.getElementById('viewDate').innerText = formattedDate;
+                    document.getElementById('viewTotal').innerText = decodedData.total.replace('.', ',');
+
+                    const itemsContainer = document.getElementById('viewItems');
+                    itemsContainer.innerHTML = '';
+                    decodedData.items.forEach(item => {
+                        const line = document.createElement('div');
+                        line.className = 'client-item-line';
+                        line.innerHTML = `<span>• ${item.n}</span> <strong>R$ ${parseFloat(item.p).toFixed(2).replace('.', ',')}</strong>`;
+                        itemsContainer.appendChild(line);
+                    });
+
+                } catch(e) {
+                    alert('Erro de validação: Este link de orçamento é inválido.');
+                    window.location.href = window.location.href.split('?')[0];
+                }
+            }
+        }
+    </script>
+</body>
+</html>
