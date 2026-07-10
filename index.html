@@ -11,7 +11,7 @@
             --primary-color: #CC3333;
             --primary-hover: #B32424;
             --secondary-color: #43A047;
-            --background-color: #FFF3E0; /* Cor de fundo do 2º modelo */
+            --background-color: #FFF3E0;
             --card-background: #FFFFFF;
             --text-color: #4E342E;
             --border-color: #FFE0B2;
@@ -45,13 +45,14 @@
             position: relative;
         }
 
-        /* TELA DE LOGIN PRIVADA */
+        /* ESTILIZAÇÃO DA TELA DE LOGIN PRIVADA */
         #login-screen {
             text-align: center;
+            padding: 10px 0;
         }
 
         .logo-container {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: center;
         }
 
@@ -88,11 +89,11 @@
         p.subtitle {
             color: #757575;
             font-size: 14px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         .input-group {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
             text-align: left;
         }
 
@@ -144,7 +145,7 @@
             background-color: var(--primary-hover);
         }
 
-        /* PAINEL DE CRIAÇÃO */
+        /* PAINEL DE CRIAÇÃO (OCULTO POR PADRÃO) */
         #dashboard-screen {
             display: none;
         }
@@ -240,7 +241,7 @@
             outline: none;
         }
 
-        /* TELA DO CLIENTE (RECIBO) */
+        /* TELA DO CLIENTE (RECIBO - OCULTA POR PADRÃO) */
         #client-screen {
             display: none;
         }
@@ -330,7 +331,7 @@
 
     <div class="container">
         
-        <!-- 1. TELA DE LOGIN PRIVADA -->
+        <!-- 1. TELA DE LOGIN PRIVADA DA DONA -->
         <div id="login-screen">
             <div class="logo-container">
                 <div class="logo-bg"><div class="logo-img">🥟</div></div>
@@ -346,10 +347,10 @@
                 <label>Senha de Acesso</label>
                 <input type="password" id="password" placeholder="••••••••">
             </div>
-            <button class="btn-primary" onclick="handleLogin()">Entrar no Panel</button>
+            <button class="btn-primary" onclick="handleLogin()">Entrar no Painel</button>
         </div>
 
-        <!-- 2. PAINEL DE CRIAÇÃO (SÓ ABRE COM LOGIN DA DONA) -->
+        <!-- 2. PAINEL DE CRIAÇÃO (SÓ ABRE APÓS LOGIN DA DONA) -->
         <div id="dashboard-screen">
             <button class="btn-logout" onclick="handleLogout()"><i class="fa-solid fa-power-off"></i> Sair</button>
             
@@ -386,7 +387,7 @@
 
             <button class="btn-primary" id="btn-generate" onclick="generateBudgetLink()">Gerar Link Seguro</button>
 
-            <!-- CAIXA VOLTOU: Mostra o link perfeitamente encurtado e limpo para a dona copiar -->
+            <!-- CAIXA DE SUCESSO COM O LINK CURTO PARA COPIAR -->
             <div class="result-box" id="result-box">
                 <p>📸 Link criptografado gerado com sucesso!</p>
                 <input type="text" class="share-link" id="generated-url" readonly onclick="this.select()">
@@ -394,7 +395,7 @@
             </div>
         </div>
 
-        <!-- 3. TELA DO CLIENTE (ABRE DIRETO SEM PEDIR LOGIN) -->
+        <!-- 3. TELA DO CLIENTE (RECIBO - SÓ QUEM TEM O LINK GERADO ACESSA DIRETO) -->
         <div id="client-screen">
             <div class="logo-container">
                 <div class="logo-bg"><div class="logo-img">🥟</div></div>
@@ -424,7 +425,7 @@
                     <span id="view-total">R$ 0,00</span>
                 </div>
 
-                <!-- Dados profissionais combinados -->
+                <!-- Dados profissionais -->
                 <div class="company-info">
                     <strong>Kika Salgados</strong><br>
                     CNPJ: 24.864.405/0001-36<br>
@@ -449,6 +450,7 @@
     <div class="toast" id="toast">Copiado!</div>
 
     <script>
+        // Credenciais configuradas
         const AUTH_EMAIL = "valquiriavasconcelosdejesus@gmail.com";
         const AUTH_PASS = "250182";
         const PIX_KEY = "01387976680";
@@ -456,14 +458,17 @@
 
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
-            // Se o link contiver o parâmetro 'orçamento', pula direto pra tela do cliente sem pedir senha!
+            // Se possuir o parâmetro de orçamento na URL, significa que é o cliente abrindo o link encurtado.
             if (urlParams.has('orçamento')) {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('client-screen').style.display = 'block';
                 renderClientView(urlParams);
             } else {
+                // Se for o link puro, checa se a dona já efetuou o login antes
                 if (localStorage.getItem('kika_logged') === 'true') {
                     showDashboard();
+                } else {
+                    document.getElementById('login-screen').style.display = 'block';
                 }
             }
         };
@@ -553,11 +558,10 @@
             const baseUrl = window.location.href.split('?')[0];
             const longUrl = `${baseUrl}?orçamento=${encodedData}`;
 
-            // Encurta automaticamente por trás dos panos usando a API is.gd
+            // Encurtador por trás dos panos via API is.gd
             fetch(`https://corsproxy.io/?${encodeURIComponent('https://is.gd/create.php?format=json&url=' + encodeURIComponent(longUrl))}`)
                 .then(res => res.json())
                 .then(data => {
-                    // Exibe o link encurtado limpinho e curto na caixa de texto
                     document.getElementById('generated-url').value = data.shorturl || longUrl;
                     document.getElementById('result-box').style.display = 'block';
                 })
