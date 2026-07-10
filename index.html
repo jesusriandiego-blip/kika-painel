@@ -11,7 +11,7 @@
             --primary-color: #CC3333;
             --primary-hover: #B32424;
             --secondary-color: #43A047;
-            --background-color: #FFF3E0;
+            --background-color: #FFF3E0; /* Cor de fundo do 2º modelo */
             --card-background: #FFFFFF;
             --text-color: #4E342E;
             --border-color: #FFE0B2;
@@ -207,7 +207,40 @@
             margin-bottom: 20px;
         }
 
-        /* TELA DO CLIENTE */
+        /* CAIXA DE RESULTADO DO LINK ENCURTADO */
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #FFEBEE;
+            border: 1px dashed var(--primary-color);
+            border-radius: 10px;
+            display: none;
+            text-align: center;
+        }
+
+        .result-box p {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #C62828;
+        }
+
+        .share-link {
+            width: 100%;
+            padding: 12px;
+            background-color: #fff;
+            border: 1px solid #FFCDD2;
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            text-align: center;
+            word-break: break-all;
+            font-weight: bold;
+            outline: none;
+        }
+
+        /* TELA DO CLIENTE (RECIBO) */
         #client-screen {
             display: none;
         }
@@ -313,10 +346,10 @@
                 <label>Senha de Acesso</label>
                 <input type="password" id="password" placeholder="••••••••">
             </div>
-            <button class="btn-primary" onclick="handleLogin()">Entrar no Painel</button>
+            <button class="btn-primary" onclick="handleLogin()">Entrar no Panel</button>
         </div>
 
-        <!-- 2. PAINEL DE CRIAÇÃO -->
+        <!-- 2. PAINEL DE CRIAÇÃO (SÓ ABRE COM LOGIN DA DONA) -->
         <div id="dashboard-screen">
             <button class="btn-logout" onclick="handleLogout()"><i class="fa-solid fa-power-off"></i> Sair</button>
             
@@ -352,9 +385,16 @@
             </div>
 
             <button class="btn-primary" id="btn-generate" onclick="generateBudgetLink()">Gerar Link Seguro</button>
+
+            <!-- CAIXA VOLTOU: Mostra o link perfeitamente encurtado e limpo para a dona copiar -->
+            <div class="result-box" id="result-box">
+                <p>📸 Link criptografado gerado com sucesso!</p>
+                <input type="text" class="share-link" id="generated-url" readonly onclick="this.select()">
+                <button class="btn-primary" style="background:#cc3333;" onclick="copyGeneratedLink()">Copiar Link do Orçamento</button>
+            </div>
         </div>
 
-        <!-- 3. TELA DO CLIENTE -->
+        <!-- 3. TELA DO CLIENTE (ABRE DIRETO SEM PEDIR LOGIN) -->
         <div id="client-screen">
             <div class="logo-container">
                 <div class="logo-bg"><div class="logo-img">🥟</div></div>
@@ -384,6 +424,7 @@
                     <span id="view-total">R$ 0,00</span>
                 </div>
 
+                <!-- Dados profissionais combinados -->
                 <div class="company-info">
                     <strong>Kika Salgados</strong><br>
                     CNPJ: 24.864.405/0001-36<br>
@@ -415,6 +456,7 @@
 
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
+            // Se o link contiver o parâmetro 'orçamento', pula direto pra tela do cliente sem pedir senha!
             if (urlParams.has('orçamento')) {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('client-screen').style.display = 'block';
@@ -479,7 +521,6 @@
             return total;
         }
 
-        // FUNÇÃO ATUALIZADA: GERA O LINK EM SILÊNCIO, ENVIA PRO WHATSAPP E LIMPA A TELA IMEDIATAMENTE (VOLTA PRA IMG 2)
         function generateBudgetLink() {
             const name = document.getElementById('client-name').value.trim();
             const eventDate = document.getElementById('event-date').value;
@@ -503,7 +544,7 @@
             }
 
             const btn = document.getElementById('btn-generate');
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processando...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Encurtando...`;
             btn.disabled = true;
 
             const dataObj = { client: name, date: eventDate, list: items, genAt: Date.now() };
@@ -512,15 +553,17 @@
             const baseUrl = window.location.href.split('?')[0];
             const longUrl = `${baseUrl}?orçamento=${encodedData}`;
 
-            // Encurta invisivelmente por trás dos panos
+            // Encurta automaticamente por trás dos panos usando a API is.gd
             fetch(`https://corsproxy.io/?${encodeURIComponent('https://is.gd/create.php?format=json&url=' + encodeURIComponent(longUrl))}`)
                 .then(res => res.json())
                 .then(data => {
-                    const finalUrl = data.shorturl || longUrl;
-                    sendToWhatsAppAndReset(name, items, finalUrl);
+                    // Exibe o link encurtado limpinho e curto na caixa de texto
+                    document.getElementById('generated-url').value = data.shorturl || longUrl;
+                    document.getElementById('result-box').style.display = 'block';
                 })
                 .catch(() => {
-                    sendToWhatsAppAndReset(name, items, longUrl);
+                    document.getElementById('generated-url').value = longUrl;
+                    document.getElementById('result-box').style.display = 'block';
                 })
                 .finally(() => {
                     btn.innerHTML = `Gerar Link Seguro`;
@@ -528,33 +571,11 @@
                 });
         }
 
-        function sendToWhatsAppAndReset(clientName, items, shortUrl) {
-            let total = 0;
-            let itemsText = '';
-            items.forEach(item => {
-                total += item.v;
-                itemsText += `• ${item.n}: ${item.v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n`;
-            });
-
-            // Monta o texto que vai abrir no WhatsApp da Kika para ela apenas enviar para o cliente
-            const msg = encodeURIComponent(`✨ *Kika Salgados - Orçamento Gerado* ✨\n\n👤 *Cliente:* ${clientName}\n\n📋 *Itens:* \n${itemsText}\n💰 *Total:* ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n\n🔗 *Acesse seu orçamento completo aqui:* \n${shortUrl}`);
-            
-            // Abre o WhatsApp da Kika com a mensagem montada e o link encurtado dentro
-            window.open(`https://wa.me/${COMPANY_PHONE}?text=${msg}`, '_blank');
-
-            // RETORNA EXATAMENTE PARA O ESTADO DA IMAGEM 2 (Tudo limpo para o próximo)
-            document.getElementById('client-name').value = '';
-            document.getElementById('event-date').value = '';
-            
-            const container = document.getElementById('items-container');
-            container.innerHTML = `
-                <div class="item-row">
-                    <input type="text" class="item-name" placeholder="Item (Ex: Cento de Salgados)" value="Almoço/jantar">
-                    <input type="number" class="item-val" placeholder="Valor" oninput="calculateTotal()" value="">
-                    <button class="btn-remove" onclick="removeItem(this)"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-            `;
-            document.getElementById('total-display').innerText = 'R$ 0,00';
+        function copyGeneratedLink() {
+            const input = document.getElementById('generated-url');
+            input.select();
+            navigator.clipboard.writeText(input.value);
+            showToast("Link copiado com sucesso!");
         }
 
         function renderClientView(params) {
