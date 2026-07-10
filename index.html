@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kika Salgados - Painel de Orçamentos</title>
+    <title>Kika Salgados - Gerador Digital de Orçamentos</title>
     <!-- Font Awesome para Ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #E65100;
-            --primary-light: #FFB74D;
+            --primary-color: #CC3333;
+            --primary-hover: #B32424;
             --secondary-color: #43A047;
-            --background-color: #FFF3E0;
+            --background-color: #FFF3E0; /* Fundo do 2º modelo */
             --card-background: #FFFFFF;
             --text-color: #4E342E;
             --border-color: #FFE0B2;
@@ -37,85 +37,98 @@
         .container {
             background-color: var(--card-background);
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(230, 81, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             width: 100%;
-            max-width: 500px;
+            max-width: 550px;
             padding: 30px;
-            border: 2px solid var(--border-color);
+            border-top: 8px solid var(--primary-color);
+            position: relative;
         }
 
-        /* LOGIN SCREEN */
+        /* TELA DE LOGIN */
         #login-screen {
             text-align: center;
         }
 
         .logo-container {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
-        .logo-icon {
-            font-size: 60px;
-            color: var(--primary-color);
-            background: #FFE0B2;
-            width: 110px;
-            height: 110px;
-            line-height: 110px;
+        .logo-bg {
+            background: #FFEBEB;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 4px 15px rgba(230, 81, 0, 0.2);
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid #FFCDD2;
         }
 
-        h2 {
+        .logo-img {
+            width: 65px;
+            height: 65px;
+            font-size: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1.main-title {
             color: var(--primary-color);
-            margin-bottom: 10px;
-            font-size: 24px;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
         }
 
         p.subtitle {
-            color: #795548;
+            color: #757575;
             font-size: 14px;
             margin-bottom: 25px;
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             text-align: left;
         }
 
         .input-group label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
+            margin-bottom: 6px;
+            font-weight: bold;
             font-size: 14px;
-            color: var(--text-color);
+            color: #333;
         }
 
-        .input-group input {
+        .input-group input, .item-row input {
             width: 100%;
-            padding: 14px 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s;
-            background-color: #FFFDE7;
+            padding: 12px 14px;
+            border: 1px solid #CCCCCC;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.2s;
+            outline: none;
         }
 
-        .input-group input:focus {
-            outline: none;
+        .input-group input:focus, .item-row input:focus {
             border-color: var(--primary-color);
-            background-color: #fff;
-            box-shadow: 0 0 0 4px rgba(230, 81, 0, 0.1);
+            box-shadow: 0 0 0 3px rgba(204, 51, 51, 0.1);
         }
 
         button {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 16px;
             font-weight: bold;
+            text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -125,159 +138,175 @@
         .btn-primary {
             background-color: var(--primary-color);
             color: white;
-            box-shadow: 0 4px 12px rgba(230, 81, 0, 0.3);
         }
 
         .btn-primary:hover {
-            background-color: #D84315;
-            transform: translateY(-2px);
+            background-color: var(--primary-hover);
         }
 
-        .btn-whatsapp {
-            background-color: var(--secondary-color);
-            color: white;
-            box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
-            text-decoration: none;
-            margin-top: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            padding: 15px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .btn-whatsapp:hover {
-            background-color: #388E3C;
-            transform: translateY(-2px);
-        }
-
-        .btn-pix {
-            background-color: #00BDF2;
-            color: white;
-            box-shadow: 0 4px 12px rgba(0, 189, 242, 0.3);
-            margin-top: 15px;
-        }
-
-        .btn-pix:hover {
-            background-color: #00A3D1;
-            transform: translateY(-2px);
-        }
-
-        /* DASHBOARD SCREEN */
+        /* PAINEL DE CRIAÇÃO */
         #dashboard-screen {
             display: none;
         }
 
-        .form-row {
-            display: flex;
-            gap: 15px;
+        .btn-logout {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: auto;
+            padding: 6px 12px;
+            font-size: 11px;
+            background: #757575;
+            color: white;
+            border-radius: 6px;
         }
 
-        .form-row .input-group {
-            flex: 1;
+        .item-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .item-name { flex: 2; }
+        .item-val { flex: 1; }
+
+        .btn-remove {
+            background: #E53935;
+            color: white;
+            width: 42px;
+            height: 42px;
+            padding: 0;
+            border-radius: 8px;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .btn-add {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            width: auto;
+            display: inline-flex;
+        }
+
+        .btn-add:hover { background-color: #43A047; }
+
+        .total-box {
+            background-color: #FFF3E0;
+            border: 1px solid #FFE0B2;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #E65100;
+            margin-bottom: 20px;
         }
 
         .result-box {
-            margin-top: 25px;
-            padding: 20px;
-            background-color: #F5F5F5;
-            border-radius: 12px;
-            border: 2px dashed #BDBDBD;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #FFEBEE;
+            border: 1px dashed var(--primary-color);
+            border-radius: 10px;
             display: none;
             text-align: center;
         }
 
         .result-box p {
-            font-size: 14px;
-            margin-bottom: 12px;
-            font-weight: 500;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #C62828;
         }
 
         .share-link {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             background-color: #fff;
-            border: 1px solid #CCC;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 15px;
+            border: 1px solid #FFCDD2;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
             text-align: center;
             word-break: break-all;
+            font-weight: bold;
         }
 
-        /* CLIENT SCREEN (VIEW) */
+        /* TELA DO CLIENTE (RECIBO) */
         #client-screen {
             display: none;
         }
 
         .receipt {
-            border: 1px solid var(--border-color);
+            border: 1px solid #FFE0B2;
             border-radius: 12px;
             padding: 20px;
             background-color: #FFFDE7;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .receipt-header {
             text-align: center;
-            border-bottom: 2px dashed var(--border-color);
-            padding-bottom: 15px;
+            border-bottom: 2px dashed #FFE0B2;
+            padding-bottom: 12px;
             margin-bottom: 15px;
         }
 
         .receipt-title {
             font-weight: bold;
-            font-size: 18px;
+            font-size: 16px;
             color: var(--primary-color);
+            letter-spacing: 0.5px;
         }
 
         .receipt-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 15px;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
 
         .receipt-total {
             display: flex;
             justify-content: space-between;
             margin-top: 15px;
-            padding-top: 15px;
-            border-top: 2px dashed var(--border-color);
+            padding-top: 12px;
+            border-top: 2px dashed #FFE0B2;
             font-size: 18px;
             font-weight: bold;
             color: var(--primary-color);
         }
 
         .company-info {
-            font-size: 12px;
+            font-size: 11px;
             color: #795548;
             text-align: center;
             margin-top: 15px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 15px;
+            border-top: 1px solid #FFE0B2;
+            padding-top: 12px;
             line-height: 1.5;
         }
 
-        .pix-section {
+        .pix-box {
             background: #E0F7FA;
             border: 1px solid #B2EBF2;
-            border-radius: 12px;
-            padding: 15px;
+            border-radius: 10px;
+            padding: 12px;
             text-align: center;
-            margin-top: 15px;
+            margin-bottom: 15px;
         }
 
-        .pix-title {
-            color: #00838F;
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 5px;
+        .btn-whatsapp {
+            background-color: var(--secondary-color);
+            color: white;
+            text-decoration: none;
         }
+        .btn-whatsapp:hover { background-color: #388E3C; }
 
         .toast {
             position: fixed;
@@ -286,92 +315,94 @@
             transform: translateX(-50%);
             background: #333;
             color: white;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 20px;
-            font-size: 14px;
+            font-size: 13px;
             display: none;
-            z-index: 999;
+            z-index: 1000;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- 1. TELA DE LOGIN -->
+        
+        <!-- 1. TELA DE LOGIN PRIVADA -->
         <div id="login-screen">
             <div class="logo-container">
-                <div class="logo-icon">🥟</div>
+                <div class="logo-bg"><div class="logo-img">🥟</div></div>
             </div>
-            <h2>Acesso Restrito</h2>
+            <h1 class="main-title">Acesso Restrito</h1>
             <p class="subtitle">Painel de Orçamentos Kika Salgados</p>
             
             <div class="input-group">
-                <label><i class="fa-solid fa-envelope"></i> E-mail Corporativo</label>
-                <input type="email" id="email" placeholder="seu-email@gmail.com" required>
+                <label>E-mail Corporativo</label>
+                <input type="email" id="email" placeholder="seu-email@gmail.com">
             </div>
-            
             <div class="input-group">
-                <label><i class="fa-solid fa-lock"></i> Senha de Acesso</label>
-                <input type="password" id="password" placeholder="••••••••" required>
+                <label>Senha de Acesso</label>
+                <input type="password" id="password" placeholder="••••••••">
             </div>
-            
-            <button class="btn-primary" onclick="handleLogin()"><i class="fa-solid fa-right-to-bracket"></i> Entrar no Painel</button>
+            <button class="btn-primary" onclick="handleLogin()">Entrar no Painel</button>
         </div>
 
-        <!-- 2. TELA DO PAINEL (ADMIN) -->
+        <!-- 2. PAINEL DE CRIAÇÃO (PRIMEIRO MODELO VISUAL COM AS CORES DO SEGUNDO) -->
         <div id="dashboard-screen">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h2 style="margin:0;"><i class="fa-solid fa-calculator"></i> Novo Orçamento</h2>
-                <button onclick="handleLogout()" style="width:auto; padding:8px 12px; font-size:12px; background:#E53935; color:white; border-radius:8px;"><i class="fa-solid fa-power-off"></i> Sair</button>
-            </div>
+            <button class="btn-logout" onclick="handleLogout()"><i class="fa-solid fa-power-off"></i> Sair</button>
             
+            <div class="logo-container">
+                <div class="logo-bg"><div class="logo-img">🥟</div></div>
+                <h1 class="main-title">Kika Salgados</h1>
+                <p class="subtitle">Gerador Digital de Orçamentos</p>
+            </div>
+
             <div class="input-group">
                 <label>Nome do Cliente</label>
-                <input type="text" id="client-name" placeholder="Ex: Maria Silva">
-            </div>
-
-            <div class="form-row">
-                <div class="input-group">
-                    <label>Quantidade de Salgados</label>
-                    <input type="number" id="qty" placeholder="Ex: 100" oninput="calculateTotal()">
-                </div>
-                <div class="input-group">
-                    <label>Valor por Cento (R$)</label>
-                    <input type="number" id="price-per-hundred" placeholder="Ex: 90" value="90" oninput="calculateTotal()">
-                </div>
+                <input type="text" id="client-name" placeholder="Ex: Camila">
             </div>
 
             <div class="input-group">
-                <label>Taxa de Entrega (R$ - Opcional)</label>
-                <input type="number" id="delivery" placeholder="Ex: 15" value="0" oninput="calculateTotal()">
+                <label>Data do Evento</label>
+                <input type="date" id="event-date">
             </div>
 
-            <div class="input-group">
-                <label>Valor Total Estimado</label>
-                <input type="text" id="total-display" value="R$ 0,00" disabled style="background:#E0F2F1; font-weight:bold; color:#004D40; border-color:#B2DFDB;">
+            <label style="display:block; margin-bottom:8px; font-weight:bold; font-size:14px;">Produtos/Comidas do Orçamento</label>
+            <div id="items-container">
+                <!-- Linha inicial de produto -->
+                <div class="item-row">
+                    <input type="text" class="item-name" placeholder="Item (Ex: Cento de Salgados)" value="Almoço/jantar">
+                    <input type="number" class="item-val" placeholder="Valor" oninput="calculateTotal()" value="">
+                    <button class="btn-remove" onclick="removeItem(this)"><i class="fa-solid fa-xmark"></i></button>
+                </div>
             </div>
 
-            <button class="btn-primary" id="btn-generate" onclick="generateBudgetLink()"><i class="fa-solid fa-link"></i> Gerar Link do Orçamento</button>
+            <button class="btn-add" onclick="addItem()"><i class="fa-solid fa-plus"></i> Adicionar Item</button>
+
+            <div class="total-box">
+                Total Automático: <span id="total-display">R$ 0,00</span>
+            </div>
+
+            <button class="btn-primary" id="btn-generate" onclick="generateBudgetLink()">Gerar Link Seguro</button>
 
             <div class="result-box" id="result-box">
-                <p style="color:var(--secondary-color); font-weight:bold;"><i class="fa-solid fa-circle-check"></i> Link Encurtado com Sucesso!</p>
+                <p>🎉 Link criptografado gerado com sucesso!</p>
                 <input type="text" class="share-link" id="generated-url" readonly onclick="this.select()">
-                <button class="btn-primary" style="background:#757575; font-size:14px; padding:10px;" onclick="copyGeneratedLink()"><i class="fa-solid fa-copy"></i> Copiar Link do Orçamento</button>
+                <button class="btn-primary" style="background:#555;" onclick="copyGeneratedLink()">Copiar Link do Orçamento</button>
             </div>
         </div>
 
-        <!-- 3. TELA DE VISUALIZAÇÃO DO CLIENTE -->
+        <!-- 3. TELA DO CLIENTE (VAI DIRETO SEM PEDIR LOGIN SE TIVER PARÂMETRO) -->
         <div id="client-screen">
-            <div class="logo-container" style="text-align: center;">
-                <div class="logo-icon" style="width:80px; height:80px; line-height:80px; font-size:40px;">🥟</div>
-                <h2 style="margin-top:10px;">Kika Salgados</h2>
-                <p class="subtitle" style="margin-bottom:15px;">Seu orçamento detalhado</p>
+            <div class="logo-container">
+                <div class="logo-bg"><div class="logo-img">🥟</div></div>
+                <h1 class="main-title">Kika Salgados</h1>
+                <p class="subtitle">Seu orçamento detalhado</p>
             </div>
 
             <div class="receipt">
                 <div class="receipt-header">
                     <div class="receipt-title">RESUMO DO PEDIDO</div>
-                    <div id="view-date" style="font-size:12px; color:#757575; margin-top:5px;"></div>
+                    <div id="view-date" style="font-size:12px; color:#757575; margin-top:4px;"></div>
                 </div>
 
                 <div class="receipt-row">
@@ -379,16 +410,12 @@
                     <span id="view-name">-</span>
                 </div>
                 <div class="receipt-row">
-                    <span>Salgados Festa:</span>
-                    <span id="view-qty">-</span>
+                    <span><strong>Data do Evento:</strong></span>
+                    <span id="view-event-date">-</span>
                 </div>
-                <div class="receipt-row">
-                    <span>Preço (por cento):</span>
-                    <span id="view-unit">-</span>
-                </div>
-                <div class="receipt-row">
-                    <span>Taxa de Entrega:</span>
-                    <span id="view-delivery">-</span>
+                
+                <div id="view-items-list" style="margin-top:10px; border-top:1px dashed #FFE0B2; padding-top:10px;">
+                    <!-- Itens entram aqui dinamicamente -->
                 </div>
 
                 <div class="receipt-total">
@@ -396,7 +423,6 @@
                     <span id="view-total">R$ 0,00</span>
                 </div>
 
-                <!-- Dados da Empresa -->
                 <div class="company-info">
                     <strong>Kika Salgados</strong><br>
                     CNPJ: 24.864.405/0001-36<br>
@@ -405,21 +431,20 @@
                 </div>
             </div>
 
-            <!-- Área do PIX -->
-            <div class="pix-section">
-                <div class="pix-title"><i class="fa-solid fa-pix" style="color: #00BDF2;"></i> FORMA DE PAGAMENTO: PIX</div>
-                <p style="font-size: 13px; color: #555; margin-bottom: 8px;">Chave (Celular): <strong>01387976680</strong></p>
-                <button class="btn-pix" onclick="copyPixKey()"><i class="fa-solid fa-copy"></i> Copiar Chave PIX</button>
+            <div class="pix-box">
+                <p style="color:#006064; font-weight:bold; font-size:13px; margin-bottom:4px;"><i class="fa-solid fa-pix"></i> CHAVE PIX (CELULAR)</p>
+                <p style="font-size:15px; font-weight:bold; color:#333; margin-bottom:8px;">01387976680</p>
+                <button class="btn-primary" style="background:#0097A7; font-size:12px; padding:8px;" onclick="copyPixKey()">Copiar Chave PIX</button>
             </div>
 
-            <!-- Botão de Confirmação pelo WhatsApp -->
-            <a href="#" id="whatsapp-link" target="_blank" class="btn-whatsapp">
-                <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Confirmar pelo WhatsApp
+            <a href="#" id="whatsapp-link" target="_blank" class="btn-whatsapp" style="display:flex; padding:14px; border-radius:10px; font-weight:bold; justify-content:center; align-items:center; gap:8px;">
+                <i class="fa-brands fa-whatsapp" style="font-size:20px;"></i> Confirmar pelo WhatsApp
             </a>
         </div>
+
     </div>
 
-    <div class="toast" id="toast">Copiado com sucesso!</div>
+    <div class="toast" id="toast">Copiado!</div>
 
     <script>
         const AUTH_EMAIL = "valquiriavasconcelosdejesus@gmail.com";
@@ -429,7 +454,8 @@
 
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('c')) {
+            // CORREÇÃO CRÍTICA: Se tem a chave do orçamento antigo (?orçamento=), manda direto pro cliente!
+            if (urlParams.has('orçamento')) {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('client-screen').style.display = 'block';
                 renderClientView(urlParams);
@@ -441,14 +467,13 @@
         };
 
         function handleLogin() {
-            const emailInput = document.getElementById('email').value.trim();
-            const passInput = document.getElementById('password').value;
-
-            if (emailInput === AUTH_EMAIL && passInput === AUTH_PASS) {
+            const email = document.getElementById('email').value.trim();
+            const pass = document.getElementById('password').value;
+            if (email === AUTH_EMAIL && pass === AUTH_PASS) {
                 localStorage.setItem('kika_logged', 'true');
                 showDashboard();
             } else {
-                alert('Credenciais incorretas.');
+                alert('Acesso negado. Credenciais incorretas.');
             }
         }
 
@@ -462,92 +487,133 @@
             window.location.href = window.location.href.split('?')[0];
         }
 
-        function calculateTotal() {
-            const qty = parseFloat(document.getElementById('qty').value) || 0;
-            const pricePerHundred = parseFloat(document.getElementById('price-per-hundred').value) || 0;
-            const delivery = parseFloat(document.getElementById('delivery').value) || 0;
+        function addItem() {
+            const container = document.getElementById('items-container');
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            row.innerHTML = `
+                <input type="text" class="item-name" placeholder="Item (Ex: Cento de Salgados)">
+                <input type="number" class="item-val" placeholder="Valor" oninput="calculateTotal()">
+                <button class="btn-remove" onclick="removeItem(this)"><i class="fa-solid fa-xmark"></i></button>
+            `;
+            container.appendChild(row);
+        }
 
-            const total = ((qty / 100) * pricePerHundred) + delivery;
-            document.getElementById('total-display').value = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        function removeItem(btn) {
+            const rows = document.querySelectorAll('.item-row');
+            if(rows.length > 1) {
+                btn.parentElement.remove();
+                calculateTotal();
+            } else {
+                alert("Você precisa manter ao menos um item no orçamento!");
+            }
+        }
+
+        function calculateTotal() {
+            let total = 0;
+            const values = document.querySelectorAll('.item-val');
+            values.forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+            document.getElementById('total-display').innerText = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             return total;
         }
 
         function generateBudgetLink() {
             const name = document.getElementById('client-name').value.trim();
-            const qty = document.getElementById('qty').value;
-            const price = document.getElementById('price-per-hundred').value;
-            const delivery = document.getElementById('delivery').value;
+            const eventDate = document.getElementById('event-date').value;
+            
+            if (!name) {
+                alert('Por favor, informe o nome do cliente.');
+                return;
+            }
 
-            if (!name || !qty || !price) {
-                alert('Por favor, preencha todos os campos obrigatórios.');
+            const items = [];
+            const rows = document.querySelectorAll('.item-row');
+            rows.forEach(row => {
+                const iName = row.querySelector('.item-name').value.trim();
+                const iVal = parseFloat(row.querySelector('.item-val').value) || 0;
+                if(iName) items.push({ n: iName, v: iVal });
+            });
+
+            if(items.length === 0) {
+                alert('Adicione pelo menos um produto válido.');
                 return;
             }
 
             const btn = document.getElementById('btn-generate');
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Encurtando link...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Encurtando...`;
             btn.disabled = true;
 
-            const dataObj = { n: name, q: qty, p: price, d: delivery, t: Date.now() };
+            const dataObj = { client: name, date: eventDate, list: items, genAt: Date.now() };
             const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(dataObj))));
             
             const baseUrl = window.location.href.split('?')[0];
-            const longUrl = `${baseUrl}?c=${encodedData}`;
+            // Mantendo a chave original exata da primeira foto: ?orçamento=
+            const longUrl = `${baseUrl}?orçamento=${encodedData}`;
 
-            // MÁGICA: Envia para o encurtador gratuito is.gd via Proxy para evitar erros de segurança (CORS)
+            // Encurtador automático profissional via API sem quebrar CORS
             fetch(`https://corsproxy.io/?${encodeURIComponent('https://is.gd/create.php?format=json&url=' + encodeURIComponent(longUrl))}`)
                 .then(res => res.json())
                 .then(data => {
-                    if(data.shorturl) {
-                        document.getElementById('generated-url').value = data.shorturl;
-                    } else {
-                        document.getElementById('generated-url').value = longUrl;
-                    }
+                    document.getElementById('generated-url').value = data.shorturl || longUrl;
                     document.getElementById('result-box').style.display = 'block';
                 })
                 .catch(() => {
-                    // Se o encurtador falhar por oscilação da internet, ele exibe o link normal para não travar o painel
                     document.getElementById('generated-url').value = longUrl;
                     document.getElementById('result-box').style.display = 'block';
                 })
                 .finally(() => {
-                    btn.innerHTML = `<i class="fa-solid fa-link"></i> Gerar Link do Orçamento`;
+                    btn.innerHTML = `Gerar Link Seguro`;
                     btn.disabled = false;
                 });
         }
 
         function copyGeneratedLink() {
-            const copyText = document.getElementById('generated-url');
-            copyText.select();
-            navigator.clipboard.writeText(copyText.value);
-            showToast("Link copiado com sucesso!");
+            const input = document.getElementById('generated-url');
+            input.select();
+            navigator.clipboard.writeText(input.value);
+            showToast("Link copiado!");
         }
 
         function renderClientView(params) {
             try {
-                const encodedData = params.get('c');
-                const decodedObj = JSON.parse(decodeURIComponent(escape(atob(encodedData))));
+                const encodedData = params.get('orçamento');
+                const data = JSON.parse(decodeURIComponent(escape(atob(encodedData))));
 
-                const qty = parseFloat(decodedObj.q) || 0;
-                const price = parseFloat(decodedObj.p) || 0;
-                const delivery = parseFloat(decodedObj.d) || 0;
-                const total = ((qty / 100) * price) + delivery;
-
-                document.getElementById('view-name').innerText = decodedObj.n;
-                document.getElementById('view-qty').innerText = `${qty} unidades`;
-                document.getElementById('view-unit').innerText = price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                document.getElementById('view-delivery').innerText = delivery > 0 ? delivery.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Cortesia / Retirada';
-                document.getElementById('view-total').innerText = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                document.getElementById('view-name').innerText = data.client;
                 
-                if (decodedObj.t) {
-                    const date = new Date(decodedObj.t);
-                    document.getElementById('view-date').innerText = `Gerado em: ${date.toLocaleDateString('pt-BR')} às ${date.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+                if(data.date) {
+                    const [ano, mes, dia] = data.date.split('-');
+                    document.getElementById('view-event-date').innerText = `${dia}/${mes}/${ano}`;
+                } else {
+                    document.getElementById('view-event-date').innerText = 'Não informada';
                 }
 
-                const msg = encodeURIComponent(`Olá, Kika Salgados! Gostaria de confirmar meu orçamento:\n\n👤 Cliente: ${decodedObj.n}\n📦 Quantidade: ${qty} salgados\n💰 Total: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n\nForma de pagamento escolhida: PIX.`);
+                if (data.genAt) {
+                    const d = new Date(data.genAt);
+                    document.getElementById('view-date').innerText = `Gerado em: ${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}`;
+                }
+
+                const listContainer = document.getElementById('view-items-list');
+                listContainer.innerHTML = '';
+                let total = 0;
+
+                data.list.forEach(item => {
+                    total += item.v;
+                    const row = document.createElement('div');
+                    row.className = 'receipt-row';
+                    row.innerHTML = `<span>${item.n}</span><span>${item.v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>`;
+                    listContainer.appendChild(row);
+                });
+
+                document.getElementById('view-total').innerText = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+                const msg = encodeURIComponent(`Olá, Kika Salgados! Acabei de conferir meu orçamento:\n\n👤 Cliente: ${data.client}\n💰 Total: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n\nGostaria de confirmar o pedido via PIX.`);
                 document.getElementById('whatsapp-link').href = `https://wa.me/${COMPANY_PHONE}?text=${msg}`;
 
             } catch (e) {
-                alert('Erro ao carregar o orçamento.');
+                alert('Erro na leitura do link do orçamento.');
             }
         }
 
@@ -560,7 +626,7 @@
             const toast = document.getElementById('toast');
             toast.innerText = text;
             toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 2500);
+            setTimeout(() => { toast.style.display = 'none'; }, 2000);
         }
     </script>
 </body>
